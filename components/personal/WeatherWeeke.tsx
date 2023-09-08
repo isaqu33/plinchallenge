@@ -8,6 +8,8 @@ function WeatherWeeke({ data }: WeatherWeekeProp) {
   // Crie um conjunto para manter as datas únicas
   const datasUnicas = new Set();
 
+  console.log(data)
+
   // Função para obter o nome do dia da semana a partir de uma data
   const getDiaSemana = (dataStr: any) => {
     const diasSemana = [

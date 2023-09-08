@@ -15,7 +15,7 @@ export async function fetchwhetherToday(latitude: string, longitude: string) {
 }
 
 // Função para buscar os dados do post
-export async function fetchwhetherWeek({ latitude, longitude }: props) {
+export async function fetchwhetherWeek(latitude: string, longitude: string) {
   const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}`);
   const data = await response.json();
   return data;

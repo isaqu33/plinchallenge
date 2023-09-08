@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import DeteilsWeatherToday from "@/components/personal/DeteilsWeatherToday";
 import WeatherWeeke from "@/components/personal/WeatherWeeke";
@@ -11,22 +11,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Climate() {
   const { push } = useRouter();
-  var InfoString: any = "";
 
-  if (typeof window !== "undefined") {
-    InfoString = localStorage.getItem("location");
-    // Use localStorage aqui
-    if (InfoString) {
-      try {
-        var { latitude, longitude } = JSON.parse(InfoString);
-      } catch (error) {
-        console.error("Erro ao fazer o parse da string JSON:", error);
-        push("/");
-      }
-    } else {
-      console.error("A string JSON recuperada do localStorage é nula.");
+  const InfoString = typeof window !== 'undefined'?localStorage.getItem("location"):null;
+
+  if (InfoString) {
+    try {
+      var { latitude, longitude } = JSON.parse(InfoString);
+    } catch (error) {
+      console.error("Erro ao fazer o parse da string JSON:", error);
       push("/");
     }
+  } else {
+    console.error("A string JSON recuperada do localStorage é nula.");
+    push("/");
   }
 
   const { data: whetherToday, isLoading: iswhetherTodayLoading } = useQuery(
@@ -36,10 +33,8 @@ export default function Climate() {
 
   const { data: whetherWeek, isLoading: iswhetherWeekLoading } = useQuery(
     "whetherWeek",
-    () => fetchwhetherWeek({ latitude, longitude })
+    () => fetchwhetherWeek(latitude, longitude)
   );
-
-  console.log(latitude)
 
   if (iswhetherTodayLoading || iswhetherWeekLoading) {
     return (
