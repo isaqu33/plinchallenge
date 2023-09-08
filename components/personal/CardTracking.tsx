@@ -41,19 +41,23 @@ export function CardTracking({ getParams }: CardTrackingProp) {
     <Tabs defaultValue="account" className="w-[90%]">
       <Card>
         <CardHeader>
-          <CardTitle>Cep</CardTitle>
+          <CardTitle>{"Cep"}</CardTitle>
           <CardDescription>
-            Para identificar os possiveis seus possiveis Ceps, coloque as
-            informações a baixo.
+            {
+              "Para identificar os possiveis seus possiveis Ceps, coloque as informações a baixo."
+            }
             <br></br>
             <br></br>
-            OBS: Para Conseguirmos identificar os possíveis CEP-S preencha todos
-            os campos!
+            {
+              " OBS: Para Conseguirmos identificar os possíveis CEP-S preencha todos os campos!"
+            }
             <br></br>
             <br></br>
-            iNFO: Coloque as informações corretas para conseguirmos fazer a
-            consulta!&apos;CASO NÃO CONSIGA, AQUI ESTÁ UM EXEMPLO: UF: RS - CIDADE:
-            Porto Alegre - Rua: Domingos&apos;
+            <p>
+              {
+                "Coloque as informações corretas para conseguirmos fazer a consultaCaso não consiga, aqui está um exemplo: UF: RS - CIDADE: Porto Alegre - Rua: Domingos"
+              }
+            </p>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -68,7 +72,7 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="username">Cidade</Label>
+            <Label htmlFor="username">{"Cidade"}</Label>
             <Input
               id="Cidade"
               placeholder="Brasilia, Ceara, Norte"
@@ -78,7 +82,7 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="username">{"logradouro(Rua)"}</Label>
+            <Label htmlFor="username">{"logradouro-Rua-"}</Label>
             <Input
               id="logradouro"
               placeholder="Quadra 26, Domingos, QRC 10, Maria Lacerda"
@@ -95,7 +99,7 @@ export function CardTracking({ getParams }: CardTrackingProp) {
               getParams(`https://viacep.com.br/ws/${Uf}/${Cidade}/${Rua}/json/`)
             }
           >
-            Pesquisar Possiveis Cep-s
+            {"Pesquisar Possiveis Cep-s"}
           </Button>
         </CardFooter>
       </Card>
