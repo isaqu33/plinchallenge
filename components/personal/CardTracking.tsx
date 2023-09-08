@@ -52,8 +52,8 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             <br></br>
             <br></br>
             iNFO: Coloque as informações corretas para conseguirmos fazer a
-            consulta!(CASO NÃO CONSIGA, AQUI ESTÁ UM EXEMPLO: UF: RS - CIDADE:
-            Porto Alegre - Rua: Domingos)
+            consulta!&apos;CASO NÃO CONSIGA, AQUI ESTÁ UM EXEMPLO: UF: RS - CIDADE:
+            Porto Alegre - Rua: Domingos&apos;
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -61,7 +61,7 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             <Label htmlFor="name">UF</Label>
             <Input
               id="uf"
-              placeholder="**DF,CE,NO**"
+              placeholder="*DF,CE,NO"
               onChange={(e) => {
                 setUf(e.target.value);
               }}
@@ -71,17 +71,17 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             <Label htmlFor="username">Cidade</Label>
             <Input
               id="Cidade"
-              placeholder="**Brasilia, Ceara, Norte**"
+              placeholder="Brasilia, Ceara, Norte"
               onChange={(e) => {
                 setCidade(e.target.value);
               }}
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="username">logradouro(Rua)</Label>
+            <Label htmlFor="username">{"logradouro(Rua)"}</Label>
             <Input
               id="logradouro"
-              placeholder="**Quadra 26, Domingos, QRC 10, Maria Lacerda**"
+              placeholder="Quadra 26, Domingos, QRC 10, Maria Lacerda"
               onChange={(e) => {
                 setRua(e.target.value);
               }}
