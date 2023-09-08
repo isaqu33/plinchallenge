@@ -13,21 +13,20 @@ export default function Climate() {
   const { push } = useRouter();
   var InfoString: any = "";
 
-  if (typeof window !== "undefined" && window.localStorage) {
+  if (typeof window !== "undefined") {
     InfoString = localStorage.getItem("location");
     // Use localStorage aqui
-  }
-
-  if (InfoString) {
-    try {
-      var { latitude, longitude } = JSON.parse(InfoString);
-    } catch (error) {
-      console.error("Erro ao fazer o parse da string JSON:", error);
+    if (InfoString) {
+      try {
+        var { latitude, longitude } = JSON.parse(InfoString);
+      } catch (error) {
+        console.error("Erro ao fazer o parse da string JSON:", error);
+        push("/");
+      }
+    } else {
+      console.error("A string JSON recuperada do localStorage é nula.");
       push("/");
     }
-  } else {
-    console.error("A string JSON recuperada do localStorage é nula.");
-    push("/");
   }
 
   const { data: whetherToday, isLoading: iswhetherTodayLoading } = useQuery(
@@ -39,6 +38,8 @@ export default function Climate() {
     "whetherWeek",
     () => fetchwhetherWeek({ latitude, longitude })
   );
+
+  console.log(latitude)
 
   if (iswhetherTodayLoading || iswhetherWeekLoading) {
     return (
