@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -52,7 +52,8 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             <br></br>
             <br></br>
             iNFO: Coloque as informações corretas para conseguirmos fazer a
-            consulta!(CASO NÃO CONSIGA, AQUI ESTÁ UM EXEMPLO: UF: RS - CIDADE: Porto Alegre - Rua: Domingos)
+            consulta!(CASO NÃO CONSIGA, AQUI ESTÁ UM EXEMPLO: UF: RS - CIDADE:
+            Porto Alegre - Rua: Domingos)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
