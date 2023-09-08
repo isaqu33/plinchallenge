@@ -11,8 +11,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Climate() {
   const { push } = useRouter();
+  var InfoString: any = "";
 
-  const InfoString = localStorage.getItem("location");
+  if (typeof window !== "undefined" && window.localStorage) {
+    InfoString = localStorage.getItem("location");
+    // Use localStorage aqui
+  }
 
   if (InfoString) {
     try {
