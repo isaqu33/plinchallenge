@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -47,7 +47,7 @@ export function CardTracking({ getParams }: CardTrackingProp) {
             informações a baixo.
             <br></br>
             <br></br>
-            OBS: Para Conseguirmos identificar os possíveis CEP'S preencha todos
+            OBS: Para Conseguirmos identificar os possíveis CEP-S preencha todos
             os campos!
             <br></br>
             <br></br>
@@ -94,7 +94,7 @@ export function CardTracking({ getParams }: CardTrackingProp) {
               getParams(`https://viacep.com.br/ws/${Uf}/${Cidade}/${Rua}/json/`)
             }
           >
-            Pesquisar Possiveis Cep's
+            Pesquisar Possiveis Cep-s
           </Button>
         </CardFooter>
       </Card>
