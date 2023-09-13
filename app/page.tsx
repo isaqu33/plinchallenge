@@ -142,6 +142,8 @@ export default function Home() {
                 <p className=" ">
                   Para Proserguimos, permita seu navegador a acessar seus dados
                   de localização.,
+
+                  OBS: CASO ESTEJA EM UM CELULAR, LIGUE A LOCALIZAÇÃO DO GPS. 
                 </p>
               </div>
 
