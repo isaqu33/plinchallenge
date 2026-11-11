@@ -1,45 +1,58 @@
+import { Droplets, Gauge, Wind } from "lucide-react";
 import Mapa from "./Map";
+import WeatherIcon from "./WeatherIcon";
 import type { Coords } from "@/lib/location";
+import { skyFor } from "@/lib/sky";
 import type { WeatherToday } from "@/lib/weather-api";
 import { formatLongDate, formatTemp, formatTime } from "@/lib/weather";
 
-export default function Weathertoday({ today, coords }: { today: WeatherToday; coords: Coords }) {
-  const { name, dt, weather, main } = today;
+function Stat({ Icon, label, value }: { Icon: typeof Wind; label: string; value: string }) {
   return (
-    <section className="rounded-3xl bg-gradient-to-br from-primary/15 via-secondary to-background p-6 md:p-10">
-      <div className="grid items-center gap-8 lg:grid-cols-2">
-        <div className="space-y-5">
+    <div className="rounded-2xl bg-black/20 p-4">
+      <Icon className="mb-2 h-5 w-5 opacity-80" aria-hidden="true" />
+      <p className="text-xs font-semibold uppercase tracking-wide opacity-75">{label}</p>
+      <p className="text-xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+export default function Weathertoday({ today, coords }: { today: WeatherToday; coords: Coords }) {
+  const { name, dt, weather, main, wind } = today;
+  const sky = skyFor(weather[0].icon);
+
+  return (
+    <div className="space-y-4">
+      <section
+        className={`overflow-hidden rounded-[2rem] bg-gradient-to-br ${sky.gradient} p-6 text-white shadow-xl md:p-10`}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
-            <h1 className="text-5xl font-extrabold md:text-7xl">{name}</h1>
-            <p className="mt-2 text-sm font-semibold text-muted-foreground">
-              {formatLongDate(dt)} · Atualizado às {formatTime(dt)}
+            <p className="text-sm font-semibold opacity-80">
+              {formatLongDate(dt)} · atualizado às {formatTime(dt)}
             </p>
+            <h1 className="mt-1 text-4xl font-extrabold tracking-tight md:text-6xl">{name}</h1>
+            <p className="mt-2 text-xl font-semibold capitalize opacity-90">{weather[0].description}</p>
           </div>
-          <Mapa lat={coords.latitude} lng={coords.longitude} />
+          <WeatherIcon code={weather[0].icon} className="h-24 w-24 drop-shadow-lg md:h-32 md:w-32" />
         </div>
 
-        <div className="rounded-2xl border bg-card p-6 shadow-lg">
-          <div className="flex items-center justify-between gap-4">
-            <span className="rounded-full bg-primary px-4 py-1 text-sm font-bold text-primary-foreground">
-              Hoje
-            </span>
-            <span className="text-xl font-extrabold capitalize md:text-3xl">{weather[0].description}</span>
-          </div>
-          <div className="flex flex-col items-center py-4">
-            <img
-              src={`https://openweathermap.org/img/wn/${weather[0].icon}@2x.png`}
-              alt={weather[0].description}
-              className="w-[130px]"
-            />
-            <div className="text-6xl font-extrabold">{formatTemp(main.temp)}</div>
-          </div>
-          <div className="grid grid-cols-2 gap-3 text-center text-sm font-semibold">
-            <div className="rounded-xl bg-secondary p-3">Mínima: {formatTemp(main.temp_min)}</div>
-            <div className="rounded-xl bg-secondary p-3">Máxima: {formatTemp(main.temp_max)}</div>
-          </div>
-          <img src="/Weather.svg" alt="" className="mx-auto mt-6 hidden w-[260px] sm:block" />
+        <div className="mt-6 flex flex-wrap items-end gap-x-6 gap-y-2">
+          <span className="text-7xl font-extrabold leading-none tracking-tighter md:text-9xl">
+            {formatTemp(main.temp)}
+          </span>
+          <span className="pb-2 text-lg font-semibold opacity-85">
+            Mín {formatTemp(main.temp_min)} · Máx {formatTemp(main.temp_max)}
+          </span>
         </div>
-      </div>
-    </section>
+
+        <div className="mt-8 grid grid-cols-3 gap-3">
+          <Stat Icon={Droplets} label="Umidade" value={`${main.humidity}%`} />
+          <Stat Icon={Wind} label="Vento" value={`${wind.speed} m/s`} />
+          <Stat Icon={Gauge} label="Pressão" value={`${main.pressure} hPa`} />
+        </div>
+      </section>
+
+      <Mapa lat={coords.latitude} lng={coords.longitude} />
+    </div>
   );
 }

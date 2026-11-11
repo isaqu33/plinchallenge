@@ -1,3 +1,5 @@
+import { MapPin } from "lucide-react";
+
 interface MapProps {
   lat: number;
   lng: number;
@@ -10,19 +12,19 @@ export default function Mapa({ lat, lng }: MapProps) {
   const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border bg-card">
+    <div className="overflow-hidden rounded-3xl border bg-card">
       <iframe
         title="Mapa da sua localização"
         src={src}
         width="100%"
-        height="320"
+        height="300"
         loading="lazy"
         className="border-0"
       />
-      <div className="flex justify-around gap-2 p-3 text-sm">
-        <span className="font-semibold">Latitude: {lat.toFixed(5)}</span>
-        <span className="font-semibold">Longitude: {lng.toFixed(5)}</span>
-      </div>
+      <p className="flex items-center gap-2 px-5 py-3 text-sm font-semibold text-muted-foreground">
+        <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+        {lat.toFixed(5)}, {lng.toFixed(5)}
+      </p>
     </div>
   );
 }

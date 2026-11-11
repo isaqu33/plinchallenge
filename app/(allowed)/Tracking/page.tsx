@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import PageHero from "@/components/layout/PageHero";
+import PageTitle from "@/components/layout/PageTitle";
 import { CardTracking } from "@/components/personal/CardTracking";
 import {
   AlertDialog,
@@ -49,10 +49,11 @@ export default function Tracking() {
   }
 
   return (
-    <div className="space-y-10">
-      <PageHero image="/logorastreio.svg" imageFirst>
+    <div className="space-y-10 pb-4">
+      <div className="mx-auto max-w-xl">
+        <PageTitle title="Buscar CEP" subtitle="Informe UF, cidade e rua e veja os CEPs possíveis." />
         <CardTracking onSearch={search} loading={loading} />
-      </PageHero>
+      </div>
 
       <AlertDialog open={showAlert}>
         <AlertDialogContent>
@@ -83,11 +84,7 @@ export default function Tracking() {
               </dl>
             ))}
           </div>
-        ) : (
-          <div className="flex justify-center py-6">
-            <img src="/pesquisa.svg" alt="" className="w-full max-w-[320px] opacity-90" />
-          </div>
-        )}
+        ) : null}
       </section>
     </div>
   );

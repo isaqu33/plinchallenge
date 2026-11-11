@@ -38,7 +38,7 @@ export function CardForm() {
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Card className="shadow-lg">
+      <Card className="shadow-xl shadow-primary/5">
         <CardHeader>
           <CardTitle>Fale conosco</CardTitle>
           <CardDescription>
@@ -73,7 +73,7 @@ export function CardForm() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={!isValid}>
+          <Button type="submit" className="rounded-full px-6" disabled={!isValid}>
             Enviar
           </Button>
         </CardFooter>

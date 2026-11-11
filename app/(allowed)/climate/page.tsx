@@ -27,7 +27,7 @@ export default function Climate() {
 
   if (isError) {
     return (
-      <p className="flex min-h-[400px] items-center justify-center">
+      <p className="flex min-h-[400px] items-center justify-center text-muted-foreground">
         Não foi possível carregar o clima. Tente novamente.
       </p>
     );
@@ -35,13 +35,9 @@ export default function Climate() {
 
   if (!coords || isLoading || !data) {
     return (
-      <div className="flex min-h-[800px] w-full items-center justify-center space-x-4" aria-busy="true">
-        <Skeleton className="h-12 w-12 rounded-full" />
-        <div className="space-y-2">
-          {Array.from({ length: 12 }, (_, i) => (
-            <Skeleton key={i} className={i % 2 ? "h-4 w-[200px]" : "h-4 w-[250px]"} />
-          ))}
-        </div>
+      <div className="space-y-4" aria-busy="true" aria-label="Carregando clima">
+        <Skeleton className="h-[420px] w-full rounded-[2rem]" />
+        <Skeleton className="h-[360px] w-full rounded-3xl" />
       </div>
     );
   }

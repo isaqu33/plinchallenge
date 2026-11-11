@@ -1,10 +1,11 @@
-import PageHero from "@/components/layout/PageHero";
+import PageTitle from "@/components/layout/PageTitle";
 import { CardForm } from "@/components/personal/CardForm";
 
 export default function Register() {
   return (
-    <PageHero image="/contato.svg">
+    <div className="mx-auto max-w-xl">
+      <PageTitle title="Contato" subtitle="Dúvida, sugestão ou feedback? Escreva por aqui." />
       <CardForm />
-    </PageHero>
+    </div>
   );
 }

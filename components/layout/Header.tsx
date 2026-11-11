@@ -1,10 +1,11 @@
 "use client";
 
-import { CloudSun, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
@@ -26,8 +27,8 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
             aria-current={active ? "page" : undefined}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
               active
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:bg-accent hover:text-foreground"
             }`}
           >
             {nome}
@@ -43,39 +44,35 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/climate" className="flex items-center gap-2 text-lg font-extrabold">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <CloudSun className="h-5 w-5" />
-          </span>
-          Plin
-        </Link>
-
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Principal">
-          <NavLinks pathname={pathname} />
-        </nav>
-
-        <div className="flex items-center gap-1">
-          <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            aria-label={open ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+    <header className="sticky top-3 z-40 mx-auto w-full max-w-5xl px-3">
+      <div className="rounded-full border bg-background/70 px-4 shadow-lg shadow-primary/5 backdrop-blur-xl">
+        <div className="flex h-14 items-center justify-between">
+          <Link href="/climate" aria-label="Plin — início">
+            <Logo />
+          </Link>
+          <nav className="hidden items-center gap-1 md:flex" aria-label="Principal">
+            <NavLinks pathname={pathname} />
+          </nav>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full md:hidden"
+              aria-label={open ? "Fechar menu" : "Abrir menu"}
+              aria-expanded={open}
+              onClick={() => setOpen((o) => !o)}
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
+        {open && (
+          <nav className="flex flex-col gap-1 pb-3 md:hidden" aria-label="Principal móvel">
+            <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
+          </nav>
+        )}
       </div>
-
-      {open && (
-        <nav className="flex flex-col gap-1 border-t px-4 py-3 md:hidden" aria-label="Principal móvel">
-          <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
-        </nav>
-      )}
     </header>
   );
 }

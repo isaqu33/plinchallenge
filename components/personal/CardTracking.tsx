@@ -27,7 +27,7 @@ export function CardTracking({ onSearch, loading }: Props) {
         if (!error) onSearch(query);
       }}
     >
-      <Card className="shadow-lg">
+      <Card className="shadow-xl shadow-primary/5">
         <CardHeader>
           <CardTitle>CEP</CardTitle>
           <CardDescription>
@@ -58,7 +58,7 @@ export function CardTracking({ onSearch, loading }: Props) {
           {touched && error && <p className="text-sm text-destructive">{error}</p>}
         </CardContent>
         <CardFooter>
-          <Button type="submit" disabled={!!error || loading}>
+          <Button type="submit" className="rounded-full px-6" disabled={!!error || loading}>
             {loading ? "Pesquisando..." : "Pesquisar possíveis CEPs"}
           </Button>
         </CardFooter>
