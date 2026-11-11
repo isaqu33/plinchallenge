@@ -1,8 +1,11 @@
 "use client";
 
+import { CloudSun, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { nome: "Clima", href: "/climate" },
@@ -16,14 +19,18 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
       {links.map(({ nome, href }) => {
         const active = pathname === href;
         return (
-          <Link href={href} key={href} onClick={onNavigate} aria-current={active ? "page" : undefined}>
-            <span
-              className={`rounded-[2px] p-1 text-lg font-extrabold hover:bg-[#4646467c] ${
-                active ? "border-b-2 border-[#966892] text-[#966892]" : "text-white"
-              }`}
-            >
-              {nome}
-            </span>
+          <Link
+            href={href}
+            key={href}
+            onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              active
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            }`}
+          >
+            {nome}
           </Link>
         );
       })}
@@ -36,44 +43,39 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="flex min-h-[160px] w-full items-center justify-center bg-black">
-      <div className="h-full w-full max-w-[1000px] flex-col items-center justify-between md:flex">
-        <div className="m-1 flex w-full items-center justify-between md:justify-center">
-          <div className="flex h-full w-[200px] items-center justify-center bg-slate-600 md:w-[300px]">
-            <img src="/logo.png" alt="Plin" className="min-w-full" />
-          </div>
-          <button
-            className="flex rounded-sm md:hidden"
-            aria-label="Abrir menu"
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-          >
-            <svg
-              className="mr-1 h-6 w-6 rounded-sm bg-[#966892]"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div>
+    <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        <Link href="/climate" className="flex items-center gap-2 text-lg font-extrabold">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <CloudSun className="h-5 w-5" />
+          </span>
+          Plin
+        </Link>
 
-        <nav className="hidden w-[50%] items-center justify-between pb-10 md:flex">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Principal">
           <NavLinks pathname={pathname} />
         </nav>
 
-        {open && (
-          <nav className="flex w-full flex-col items-center justify-between md:hidden">
-            <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
-          </nav>
-        )}
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label={open ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
       </div>
+
+      {open && (
+        <nav className="flex flex-col gap-1 border-t px-4 py-3 md:hidden" aria-label="Principal móvel">
+          <NavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
+        </nav>
+      )}
     </header>
   );
 }

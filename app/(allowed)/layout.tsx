@@ -3,9 +3,9 @@ import Footer from "@/components/layout/Footer";
 
 export default function AllowedLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-black text-white">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main>{children}</main>
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-8">{children}</main>
       <Footer />
     </div>
   );

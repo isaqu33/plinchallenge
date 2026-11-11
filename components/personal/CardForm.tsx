@@ -12,7 +12,7 @@ import { contactSchema, type ContactForm } from "@/lib/contact";
 
 function FieldError({ message }: { message?: string }) {
   return message ? (
-    <p role="alert" className="text-sm text-red-600">
+    <p role="alert" className="text-sm text-destructive">
       {message}
     </p>
   ) : null;
@@ -37,8 +37,8 @@ export function CardForm() {
   }
 
   return (
-    <form className="w-[90%]" onSubmit={handleSubmit(onSubmit)} noValidate>
-      <Card>
+    <form className="w-full" onSubmit={handleSubmit(onSubmit)} noValidate>
+      <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>Fale conosco</CardTitle>
           <CardDescription>

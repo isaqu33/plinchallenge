@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PageHero from "@/components/layout/PageHero";
 import { CardTracking } from "@/components/personal/CardTracking";
 import {
   AlertDialog,
@@ -48,26 +49,10 @@ export default function Tracking() {
   }
 
   return (
-    <div>
-      <div className="flex w-full items-center justify-center">
-        <div
-          className="flex w-full max-w-[98%] items-center justify-center rounded-lg pb-2"
-          style={{
-            backgroundImage: "linear-gradient(to right top, #a883ba, #b299cd, #bdafdf, #cac4ef, #d9daff)",
-          }}
-        >
-          <div className="flex min-h-[650px] w-full max-w-[1800px] rounded-md">
-            <div className="flex w-full flex-wrap items-center justify-around">
-              <div className="flex w-full max-w-[400px] items-center justify-center overflow-hidden">
-                <img src="/logorastreio.svg" alt="" className="min-w-full" />
-              </div>
-              <div className="mt-5 flex min-h-[300px] w-[83%] max-w-[500px] items-center justify-center rounded-lg p-9 md:mt-0">
-                <CardTracking onSearch={search} loading={loading} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="space-y-10">
+      <PageHero image="/logorastreio.svg" imageFirst>
+        <CardTracking onSearch={search} loading={loading} />
+      </PageHero>
 
       <AlertDialog open={showAlert}>
         <AlertDialogContent>
@@ -84,29 +69,26 @@ export default function Tracking() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="mt-3 flex min-h-[500px] w-full items-center justify-center border-t-2 border-b-[#A883BA]">
+      <section aria-live="polite">
         {results ? (
-          <div className="mt-5 flex w-full flex-wrap items-center justify-around">
+          <div className="grid gap-4 md:grid-cols-2">
             {results.map((item) => (
-              <div
-                key={item.cep + item.logradouro}
-                className="m-1 w-full max-w-[600px] rounded-xl bg-[#121C32] p-2 hover:bg-[#121c3298]"
-              >
+              <dl key={item.cep + item.logradouro} className="rounded-2xl border bg-card p-5 shadow-sm">
                 {FIELDS.map(([label, key]) => (
-                  <div key={key} className="flex w-full justify-around">
-                    <div className="w-[30%] font-bold text-white">{label}:</div>
-                    <div className="w-[70%] font-bold text-[#D9DAFF]">{item[key]}</div>
+                  <div key={key} className="flex justify-between gap-4 py-1 text-sm">
+                    <dt className="font-semibold text-muted-foreground">{label}</dt>
+                    <dd className="text-right font-semibold">{item[key]}</dd>
                   </div>
                 ))}
-              </div>
+              </dl>
             ))}
           </div>
         ) : (
-          <div className="mt-5 flex w-full max-w-[400px] items-center justify-center overflow-hidden">
-            <img src="/pesquisa.svg" alt="" className="min-w-full" />
+          <div className="flex justify-center py-6">
+            <img src="/pesquisa.svg" alt="" className="w-full max-w-[320px] opacity-90" />
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

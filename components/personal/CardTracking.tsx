@@ -21,13 +21,13 @@ export function CardTracking({ onSearch, loading }: Props) {
 
   return (
     <form
-      className="w-[90%]"
+      className="w-full"
       onSubmit={(e) => {
         e.preventDefault();
         if (!error) onSearch(query);
       }}
     >
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
           <CardTitle>CEP</CardTitle>
           <CardDescription>
@@ -55,7 +55,7 @@ export function CardTracking({ onSearch, loading }: Props) {
             <Label htmlFor="rua">Logradouro (rua)</Label>
             <Input id="rua" placeholder="Domingos, Quadra 26" value={query.rua} onChange={set("rua")} />
           </div>
-          {touched && error && <p className="text-sm text-red-600">{error}</p>}
+          {touched && error && <p className="text-sm text-destructive">{error}</p>}
         </CardContent>
         <CardFooter>
           <Button type="submit" disabled={!!error || loading}>

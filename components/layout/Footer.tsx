@@ -1,30 +1,32 @@
+import { Linkedin, MessageCircle } from "lucide-react";
+
+const social = [
+  { label: "WhatsApp", href: "https://wa.me/61981482674", Icon: MessageCircle },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/isaque-ferreira-de-sousa-700902181/",
+    Icon: Linkedin,
+  },
+];
+
 export default function Footer() {
   return (
-    <footer className="mt-8 w-full">
-      <div className="flex w-full justify-center">
-        <div className="flex w-[200px] items-center justify-center md:w-[300px]">
-          <img src="/logo.png" alt="" className="min-w-full" />
-        </div>
-      </div>
-      <div className="flex h-[100px] w-full items-center justify-center">
-        <div className="flex h-full w-full max-w-[700px] flex-wrap items-center justify-between border-t-4 border-white text-white">
-          <div>© {new Date().getFullYear()} Plin · por Isaque</div>
-          <div className="flex w-[100px] items-center justify-center">
+    <footer className="mt-16 border-t">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-muted-foreground">
+        <span>© {new Date().getFullYear()} Plin · por Isaque</span>
+        <div className="flex items-center gap-2">
+          {social.map(({ label, href, Icon }) => (
             <a
-              href="https://wa.me/61981482674"
-              aria-label="WhatsApp"
-              className="flex w-[40px] justify-center"
+              key={label}
+              href={href}
+              aria-label={label}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full p-2 transition-colors hover:bg-accent hover:text-accent-foreground"
             >
-              <img src="/icons8-whatsapp-94.png" alt="" className="min-w-full" />
+              <Icon className="h-5 w-5" />
             </a>
-            <a
-              href="https://www.linkedin.com/in/isaque-ferreira-de-sousa-700902181/"
-              aria-label="LinkedIn"
-              className="flex w-[35px] justify-center"
-            >
-              <img src="/icons8-linkedin-48.png" alt="" className="min-w-full" />
-            </a>
-          </div>
+          ))}
         </div>
       </div>
     </footer>
