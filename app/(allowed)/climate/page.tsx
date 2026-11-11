@@ -91,7 +91,7 @@ export default function Climate() {
         <Weathertoday today={data.today} favorite={isFavorite(favorites, coords)} onToggleFavorite={toggle} />
         <HourlyForecast data={data.forecast} timezone={data.today.timezone} />
         <WeatherWeeke data={data.forecast} />
-        <DeteilsWeatherToday today={data.today} air={data.air} />
+        <DeteilsWeatherToday today={data.today} air={data.air} airForecast={data.airForecast} />
         <div className="mt-10">
           <WeatherMap lat={coords.latitude} lng={coords.longitude} />
         </div>

@@ -1,6 +1,6 @@
 import { Sunrise, Sunset } from "lucide-react";
 import AirQuality from "./AirQuality";
-import type { AirQuality as AirQualityData } from "@/lib/schemas";
+import type { AirForecastEntry, AirQuality as AirQualityData } from "@/lib/schemas";
 import type { WeatherToday } from "@/lib/weather-api";
 import { formatTime } from "@/lib/weather";
 
@@ -31,9 +31,11 @@ function SunCard({
 export default function DeteilsWeatherToday({
   today,
   air,
+  airForecast,
 }: {
   today: WeatherToday;
   air: AirQualityData | null;
+  airForecast: AirForecastEntry[];
 }) {
   const { sys } = today;
   return (
@@ -54,7 +56,7 @@ export default function DeteilsWeatherToday({
           tone="from-orange-500 to-rose-600"
         />
       </div>
-      {air && <AirQuality air={air} />}
+      {air && <AirQuality air={air} forecast={airForecast} />}
     </section>
   );
 }

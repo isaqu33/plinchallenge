@@ -21,6 +21,14 @@ describe("dailyForecast", () => {
     expect(days.map((d) => d.day)).toEqual(["2026-11-10", "2026-11-11"]);
     expect(days[0]).toMatchObject({ min: 15, max: 25, pop: 0.6 });
   });
+  it("soma o volume de chuva do dia", () => {
+    const list = [
+      { ...entry("2026-11-10 09:00:00"), rain: { "3h": 1.5 } },
+      { ...entry("2026-11-10 12:00:00"), rain: { "3h": 2 } },
+      entry("2026-11-10 15:00:00"),
+    ];
+    expect(dailyForecast(list)[0].rainMm).toBeCloseTo(3.5);
+  });
   it("usa a previsão mais próxima do meio-dia para o ícone", () => {
     const list = [
       { ...entry("2026-11-10 03:00:00"), weather: [{ icon: "01n", description: "noite" }] },

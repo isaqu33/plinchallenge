@@ -60,6 +60,8 @@ export interface DaySummary {
   max: number;
   /** maior probabilidade de chuva do dia (0–1) */
   pop: number;
+  /** chuva total prevista no dia (mm) */
+  rainMm: number;
   icon: string;
   description: string;
 }
@@ -86,6 +88,7 @@ export function dailyForecast(list: ForecastEntry[]): DaySummary[] {
       min: Math.min(...temps),
       max: Math.max(...temps),
       pop: Math.max(...entries.map((e) => e.pop)),
+      rainMm: entries.reduce((sum, e) => sum + (e.rain?.["3h"] ?? 0), 0),
       icon: noon.weather[0].icon,
       description: noon.weather[0].description,
     };

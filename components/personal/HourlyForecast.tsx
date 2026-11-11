@@ -27,6 +27,9 @@ export default function HourlyForecast({ data, timezone }: { data: ForecastEntry
               <Droplets className="h-3 w-3" aria-hidden="true" />
               {Math.round(h.pop * 100)}%
             </span>
+            {h.rain?.["3h"] ? (
+              <span className="text-xs text-muted-foreground">{h.rain["3h"].toFixed(1)} mm</span>
+            ) : null}
           </li>
         ))}
       </ul>

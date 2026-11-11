@@ -18,16 +18,16 @@ formulário de contato continua lá: ele faz parte do enunciado original, e o en
 | Área | O que tem |
 |---|---|
 | **Clima** | Temperatura, sensação, umidade, vento (direção e rajadas), pressão, visibilidade e nuvens; fundo que muda conforme o tempo e a hora |
-| **Previsão** | Próximas 24 h (a cada 3 h) e próximos dias, com mínima, máxima e **chance de chuva** |
-| **Qualidade do ar** | Índice 1–5 e poluentes (PM2,5, PM10, O₃, NO₂) |
-| **Mapa do tempo** | Leaflet + camadas de chuva, nuvens, temperatura e vento |
+| **Previsão** | Próximas 24 h (a cada 3 h) e próximos dias, com mínima, máxima, **chance de chuva** e volume previsto em mm |
+| **Qualidade do ar** | Índice 1–5, previsão das próximas 24 h e poluentes (PM2,5, PM10, O₃, NO₂, SO₂, CO) |
+| **Mapa do tempo** | Leaflet + camadas de chuva, nuvens, temperatura, vento e pressão |
 | **Cidades** | Busca por nome (geocodificação), favoritos salvos no navegador; funciona sem GPS |
 | **Unidades** | °C/km/h ou °F/mph, lembrando a escolha |
 | **CEP** | Por CEP ou por endereço, com copiar e abrir no mapa |
 | **Sobre** | Origem do projeto, antes e depois, decisões técnicas |
 
 Usa só o que o plano gratuito do OpenWeather oferece: clima atual, previsão 5 dias/3 h, geocodificação, qualidade do
-ar e tiles de mapa. (O _One Call 3.0_ exige cartão e não é usado.)
+ar (atual e previsão) e tiles de mapa. (O _One Call 3.0_ exige cartão e não é usado.)
 
 ## Decisões técnicas
 

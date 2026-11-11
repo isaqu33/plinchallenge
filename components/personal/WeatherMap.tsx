@@ -9,6 +9,7 @@ const LAYERS = [
   { id: "clouds_new", label: "Nuvens" },
   { id: "temp_new", label: "Temperatura" },
   { id: "wind_new", label: "Vento" },
+  { id: "pressure_new", label: "Pressão" },
 ] as const;
 
 type LayerId = (typeof LAYERS)[number]["id"];

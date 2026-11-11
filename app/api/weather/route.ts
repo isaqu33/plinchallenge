@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { isValidCoords } from "@/lib/location";
 import { apiKey, limited, missingKey, OWM } from "@/lib/openweather";
 import { createRateLimiter } from "@/lib/rate-limit";
-import { airQualitySchema, forecastEntrySchema, weatherTodaySchema } from "@/lib/schemas";
+import {
+  airForecastEntrySchema,
+  airQualitySchema,
+  forecastEntrySchema,
+  weatherTodaySchema,
+} from "@/lib/schemas";
 import { z } from "zod";
 
 const check = createRateLimiter({ limit: 30, windowMs: 60_000 });
@@ -25,12 +30,16 @@ export async function GET(request: Request) {
   const qs = `lat=${coords.latitude}&lon=${coords.longitude}&units=metric&lang=pt_br&appid=${key}`;
   const opts = { next: { revalidate: 600 } };
   try {
-    const [today, forecast, air] = await Promise.all([
+    const [today, forecast, air, airFc] = await Promise.all([
       fetch(`${OWM}/data/2.5/weather?${qs}`, opts),
       fetch(`${OWM}/data/2.5/forecast?${qs}`, opts),
       // a qualidade do ar é um extra: se falhar, o resto da página continua funcionando
       fetch(
         `${OWM}/data/2.5/air_pollution?lat=${coords.latitude}&lon=${coords.longitude}&appid=${key}`,
+        opts
+      ).catch(() => null),
+      fetch(
+        `${OWM}/data/2.5/air_pollution/forecast?lat=${coords.latitude}&lon=${coords.longitude}&appid=${key}`,
         opts
       ).catch(() => null),
     ]);
@@ -46,10 +55,21 @@ export async function GET(request: Request) {
       airQuality = parsed.success ? parsed.data : null;
     }
 
+    // previsão do ar: 1 ponto a cada 3 h nas próximas 24 h (a API devolve de hora em hora, 96 h)
+    let airForecast: { dt: number; aqi: number }[] = [];
+    if (airFc?.ok) {
+      const list = ((await airFc.json()) as { list?: { dt: number; main: { aqi: number } }[] }).list ?? [];
+      const parsed = z
+        .array(airForecastEntrySchema)
+        .safeParse(list.map((i) => ({ dt: i.dt, aqi: i.main.aqi })));
+      if (parsed.success) airForecast = parsed.data.filter((_, i) => i % 3 === 0).slice(0, 9);
+    }
+
     const body = {
       today: weatherTodaySchema.parse(await today.json()),
       forecast: z.array(forecastEntrySchema).parse(((await forecast.json()) as { list: unknown }).list),
       air: airQuality,
+      airForecast,
     };
     return NextResponse.json(body, { headers: CACHE });
   } catch {

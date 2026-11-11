@@ -25,6 +25,7 @@ export const weatherPayload = (name = "Brasília") => ({
     sys: { sunrise: 1_793_990_000, sunset: 1_794_030_000, country: "BR" },
   },
   forecast,
+  airForecast: [1, 2, 2, 3].map((aqi, i) => ({ dt: 1_794_000_000 + i * 10800, aqi })),
   air: { aqi: 2, components: { pm2_5: 8.1, pm10: 12.3, o3: 60.2, no2: 5.5, so2: 1.1, co: 200 } },
 });
 

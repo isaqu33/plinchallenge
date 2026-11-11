@@ -30,7 +30,7 @@ export default function WeatherWeeke({ data }: { data: ForecastEntry[] }) {
             <p className="text-xs capitalize text-muted-foreground">{d.description}</p>
             <p className="flex items-center gap-1 text-xs font-semibold text-sky-500">
               <Droplets className="h-3 w-3" aria-hidden="true" />
-              {Math.round(d.pop * 100)}%
+              {Math.round(d.pop * 100)}%{d.rainMm > 0 && ` · ${d.rainMm.toFixed(1)} mm`}
             </p>
           </div>
         ))}
