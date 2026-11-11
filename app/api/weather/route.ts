@@ -1,13 +1,19 @@
 import { NextResponse } from "next/server";
 import { isValidCoords } from "@/lib/location";
+import { apiKey, limited, missingKey, OWM } from "@/lib/openweather";
+import { createRateLimiter } from "@/lib/rate-limit";
+import { airQualitySchema, forecastEntrySchema, weatherTodaySchema } from "@/lib/schemas";
+import { z } from "zod";
 
-const BASE = "https://api.openweathermap.org/data/2.5";
+const check = createRateLimiter({ limit: 30, windowMs: 60_000 });
+const CACHE = { "Cache-Control": "public, s-maxage=600, stale-while-revalidate=300" };
 
 export async function GET(request: Request) {
-  const apiKey = process.env.OPENWEATHER_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json({ error: "OPENWEATHER_API_KEY não configurada." }, { status: 500 });
-  }
+  const key = apiKey();
+  if (!key) return missingKey();
+
+  const blocked = limited(check, request);
+  if (blocked) return blocked;
 
   const params = new URL(request.url).searchParams;
   const coords = { latitude: Number(params.get("lat")), longitude: Number(params.get("lon")) };
@@ -15,18 +21,39 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Coordenadas inválidas." }, { status: 400 });
   }
 
-  const qs = `lat=${coords.latitude}&lon=${coords.longitude}&units=metric&lang=pt_br&appid=${apiKey}`;
+  // Sempre em °C e m/s: a conversão para °F / km/h / mph é feita no cliente (cache único por local).
+  const qs = `lat=${coords.latitude}&lon=${coords.longitude}&units=metric&lang=pt_br&appid=${key}`;
+  const opts = { next: { revalidate: 600 } };
   try {
-    const [today, forecast] = await Promise.all([
-      fetch(`${BASE}/weather?${qs}`, { next: { revalidate: 600 } }),
-      fetch(`${BASE}/forecast?${qs}`, { next: { revalidate: 600 } }),
+    const [today, forecast, air] = await Promise.all([
+      fetch(`${OWM}/data/2.5/weather?${qs}`, opts),
+      fetch(`${OWM}/data/2.5/forecast?${qs}`, opts),
+      // a qualidade do ar é um extra: se falhar, o resto da página continua funcionando
+      fetch(
+        `${OWM}/data/2.5/air_pollution?lat=${coords.latitude}&lon=${coords.longitude}&appid=${key}`,
+        opts
+      ).catch(() => null),
     ]);
     if (!today.ok || !forecast.ok) {
       return NextResponse.json({ error: "Falha no provedor de clima." }, { status: 502 });
     }
-    const forecastJson = await forecast.json();
-    return NextResponse.json({ today: await today.json(), forecast: forecastJson.list });
+
+    let airQuality = null;
+    if (air?.ok) {
+      const item = ((await air.json()) as { list?: { main: { aqi: number }; components: unknown }[] })
+        .list?.[0];
+      const parsed = airQualitySchema.safeParse(item && { aqi: item.main.aqi, components: item.components });
+      airQuality = parsed.success ? parsed.data : null;
+    }
+
+    const body = {
+      today: weatherTodaySchema.parse(await today.json()),
+      forecast: z.array(forecastEntrySchema).parse(((await forecast.json()) as { list: unknown }).list),
+      air: airQuality,
+    };
+    return NextResponse.json(body, { headers: CACHE });
   } catch {
+    // rede fora, ou o provedor mudou o formato da resposta (falha do Zod)
     return NextResponse.json({ error: "Provedor de clima indisponível." }, { status: 502 });
   }
 }

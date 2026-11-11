@@ -19,3 +19,18 @@ describe("buildCepUrl", () => {
     );
   });
 });
+
+import { formatCep, normalizeCep, validateCep } from "@/lib/cep";
+
+describe("CEP direto", () => {
+  it("normaliza e formata", () => {
+    expect(normalizeCep("70040-010")).toBe("70040010");
+    expect(normalizeCep("700400101234")).toBe("70040010");
+    expect(formatCep("70040010")).toBe("70040-010");
+    expect(formatCep("700")).toBe("700");
+  });
+  it("valida 8 dígitos", () => {
+    expect(validateCep("70040-010")).toBeNull();
+    expect(validateCep("1234")).not.toBeNull();
+  });
+});
