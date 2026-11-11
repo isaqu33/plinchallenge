@@ -1,35 +1,31 @@
-"use client";
-
-interface MapProp {
-  lng: string;
-  lat: string;
+interface MapProps {
+  lat: number;
+  lng: number;
 }
 
-export default function Mapa({ lng, lat }: MapProp) {
-  // Construa a URL dinamicamente com base na latidude (lat) e longitude (lng)
-  const mapUrl = `https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15340.739312131764!2d${lng}!3d${lat}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1spt-BR!2sbr!4v1693745268415!5m2!1spt-BR!2sbr`;
-
-  // <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d15340.739312131764!2d-47.992012800000005!3d-16.003891199999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1spt-BR!2sbr!4v1693745268415!5m2!1spt-BR!2sbr" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+/** OpenStreetMap embed: não precisa de chave nem de URL "mágica" do Google. */
+export default function Mapa({ lat, lng }: MapProps) {
+  const d = 0.01;
+  const bbox = [lng - d, lat - d, lng + d, lat + d].join(",");
+  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
 
   return (
-    <div className=" bg-[white] w-full p-3 rounded-lg ; ">
+    <div className="w-full rounded-lg bg-white p-3">
       <iframe
-        src={mapUrl}
-        width={"100%"}
+        title="Mapa da sua localização"
+        src={src}
+        width="100%"
         height="400"
-        style={{ border: 2 }}
         loading="lazy"
-      ></iframe>
-
-      <div className=" mt-2 bg-[#D9DAFF] w-full flex flex-col justify-center items-center p-2 rounded-sm">
-        <h1 className=" w-full flex justify-center items-center  font-extrabold text-[#5A3E51]">
-          Suas informações de Localização:
-        </h1>
-        <span className="  font-semibold w-[70%] bg-[#ffffff] flex  justify-center items-center rounded-lg m-2">
-          Latitude:{lat}
+        className="border-0"
+      />
+      <div className="mt-2 flex w-full flex-col items-center justify-center rounded-sm bg-[#D9DAFF] p-2">
+        <h2 className="font-extrabold text-[#5A3E51]">Suas informações de localização:</h2>
+        <span className="m-2 flex w-[70%] items-center justify-center rounded-lg bg-white font-semibold text-black">
+          Latitude: {lat.toFixed(5)}
         </span>
-        <span className=" font-semibold  w-[70%] bg-[#ffffff] flex  justify-center items-center rounded-lg m-2">
-          Longitude:{lng}
+        <span className="m-2 flex w-[70%] items-center justify-center rounded-lg bg-white font-semibold text-black">
+          Longitude: {lng.toFixed(5)}
         </span>
       </div>
     </div>

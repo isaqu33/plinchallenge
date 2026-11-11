@@ -1,174 +1,106 @@
 "use client";
 
 import Image from "next/image";
-
-import SVGIMG from "../public/undraw_welcoming_re_x0qo.svg";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-
 import { useRouter } from "next/navigation";
-
+import { useEffect, useState } from "react";
+import SVGIMG from "../public/undraw_welcoming_re_x0qo.svg";
+import Dica from "@/components/personal/Dica";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import React, { useEffect } from "react";
-import Dica from "@/components/personal/Dica";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { saveLocation, type Coords } from "@/lib/location";
+
+type Status = "loading" | "granted" | "denied" | "unsupported";
 
 export default function Home() {
   const { push } = useRouter();
-  const [latitude, setlatitude] = React.useState(0);
-  const [longitude, setlongitude] = React.useState(0);
-  const [Disabled, setDisabled] = React.useState(true);
-  const [load, setload] = React.useState(false);
+  const [coords, setCoords] = useState<Coords | null>(null);
+  const [status, setStatus] = useState<Status>("loading");
+  const [showAlert, setShowAlert] = useState(false);
 
-  const [showAlert, setshowAlert] = React.useState(false);
-
-  function CallAcessPermition() {
-    if ("geolocation" in navigator) {
-      setload(true);
-      navigator.geolocation.getCurrentPosition(
-        function (position) {
-          // O usuário permitiu o acesso à localização
-          setlatitude(position.coords.latitude);
-          setlongitude(position.coords.longitude);
-
-          setDisabled(false);
-          setload(false);
-
-          // Faça algo com a localização, como enviar para o servidor, exibir no mapa, etc.
-        },
-        function (error) {
-          if (error.code === error.PERMISSION_DENIED) {
-            // O usuário negou a permissão de localização
-            console.log("Usuário negou a permissão de localização");
-            setDisabled(false);
-          } else {
-            // Ocorreu um erro ao obter a localização
-            console.error("Erro ao obter a localização: " + error.message);
-            setDisabled(false);
-          }
-        }
-      );
-    } else {
-      // O navegador não suporta a API de Geolocalização
-      console.log("Seu navegador não suporta geolocalização");
+  useEffect(() => {
+    if (!("geolocation" in navigator)) {
+      setStatus("unsupported");
+      return;
     }
-  }
-
-  React.useEffect(() => {
-    CallAcessPermition();
+    navigator.geolocation.getCurrentPosition(
+      ({ coords: c }) => {
+        setCoords({ latitude: c.latitude, longitude: c.longitude });
+        setStatus("granted");
+      },
+      () => setStatus("denied")
+    );
   }, []);
 
-  function AcessAplication() {
-   
-    if (latitude & longitude) {
-      const data = {
-        latitude: latitude,
-        longitude: longitude,
-      };
-      const jsonData = JSON.stringify(data);
-      localStorage.setItem("location", jsonData);
-
+  function access() {
+    // Antes: `latitude & longitude` (AND bit a bit) falhava para coordenadas válidas como 0 ou valores que se anulam
+    if (coords) {
+      saveLocation(coords);
       push("/climate");
     } else {
-      setshowAlert(true);
+      setShowAlert(true);
     }
   }
 
   return (
     <div
-      className=" bg-[#51424F] text-white h-[100vh] backdrop-blur-3xl flex items-center justify-around "
+      className="flex h-[100vh] items-center justify-around bg-[#51424F] text-white backdrop-blur-3xl"
       style={{
-        backgroundImage:
-          "linear-gradient(to right top, #000000, #302228, #5a3e51, #835e82, #a883ba)",
+        backgroundImage: "linear-gradient(to right top, #000000, #302228, #5a3e51, #835e82, #a883ba)",
       }}
     >
-      <div className=" text-center  min-[320px]:w-[500px]  max-[600px]:bg-sky-300 max-[600px]:hidden ">
-        <Image src={SVGIMG} alt={""} className=" md:w-[500px] min-w-ful" />
+      <div className="text-center max-[600px]:hidden min-[320px]:w-[500px]">
+        <Image src={SVGIMG} alt="" className="md:w-[500px]" priority />
       </div>
 
       <AlertDialog open={showAlert}>
-        {/* <AlertDialogTrigger>Open</AlertDialogTrigger> */}
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Ops! ):</AlertDialogTitle>
             <AlertDialogDescription>
-              Parece que está tentando acessar a apliação sem permitir que o
-              navegador acesse sua localização.. Para que a aplicação funcione,
-              precisamos de sua localização!
+              {status === "unsupported"
+                ? "Seu navegador não suporta geolocalização."
+                : "Para que a aplicação funcione, precisamos da sua localização. Permita o acesso no navegador e recarregue a página."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            {/* <AlertDialogCancel>Cancel</AlertDialogCancel> */}
-            <AlertDialogAction
-              onClick={() => {
-                setshowAlert(false);
-              }}
-            >
-              ok
-            </AlertDialogAction>
+            <AlertDialogAction onClick={() => setShowAlert(false)}>ok</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      <div>
-        <Card className="w-[350px] bg-black border-none p-3">
-          <CardHeader>
-            <CardTitle className=" text-[#966892] text-[50px]">
-              Bem Vindo
-            </CardTitle>
-
-            <CardDescription>
-              <div className=" flex justify-around items-center ">
-                <Dica TextoInfo="Para que a aplicação funcione, permita que o navegador acesse os dados de localização.."></Dica>
-                <p className=" ">
-                  Para Proserguimos, permita seu navegador a acessar seus dados
-                  de localização.,
-
-                  OBS: CASO ESTEJA EM UM CELULAR, LIGUE A LOCALIZAÇÃO DO GPS. 
-                </p>
-              </div>
-
-              <br></br>
-            </CardDescription>
-          </CardHeader>
-
-          <div className="flex justify-between items-center w-full  ">
-            <Button
-              variant="outline"
-              onClick={(item: any) => AcessAplication()}
-              disabled={Disabled}
-              className=" min-w-[100%]"
-            >
-              {load ? (
-                <span className=" border-t-4 border-b-4 rounded-[20px] border-blue-500 h-8 w-8 animate-spin mx-auto">
-                  ...
-                </span>
-              ) : (
-                "Acessar Sistema"
-              )}
-            </Button>
-          </div>
-        </Card>
-      </div>
+      <Card className="w-[350px] border-none bg-black p-3">
+        <CardHeader>
+          <CardTitle className="text-[50px] text-[#966892]">Bem-vindo</CardTitle>
+          <CardDescription>
+            <div className="flex items-center justify-around">
+              <Dica TextoInfo="Para que a aplicação funcione, permita que o navegador acesse os dados de localização." />
+              <p>
+                Para prosseguir, permita que seu navegador acesse sua localização. Em um celular, ligue o GPS.
+              </p>
+            </div>
+          </CardDescription>
+        </CardHeader>
+        <Button variant="outline" onClick={access} disabled={status === "loading"} className="min-w-full">
+          {status === "loading" ? (
+            <span
+              className="mx-auto h-8 w-8 animate-spin rounded-[20px] border-b-4 border-t-4 border-blue-500"
+              role="status"
+              aria-label="Obtendo localização"
+            />
+          ) : (
+            "Acessar sistema"
+          )}
+        </Button>
+      </Card>
     </div>
   );
 }

@@ -1,101 +1,56 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "react-query";
 import DeteilsWeatherToday from "@/components/personal/DeteilsWeatherToday";
 import WeatherWeeke from "@/components/personal/WeatherWeeke";
 import Weathertoday from "@/components/personal/Weathertoday";
-import { fetchwhetherToday, fetchwhetherWeek } from "@/useful/calls";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useQuery } from "react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { loadLocation, type Coords } from "@/lib/location";
+import { fetchWeather } from "@/lib/weather-api";
 
 export default function Climate() {
   const router = useRouter();
+  // Lido no efeito (não no render): evita o erro de hidratação servidor x cliente
+  const [coords, setCoords] = useState<Coords | null>(null);
 
-  if (typeof window !== "undefined") {
-    const InfoString = window.localStorage.getItem("location");
-    if (InfoString) {
-      try {
-        var { latitude, longitude } = JSON.parse(InfoString);
-      } catch (error) {
-        console.error("Erro ao fazer o parse da string JSON:", error);
-        router.push("/");
-      }
-    } else {
-      console.error("A string JSON recuperada do localStorage é nula.");
-      router.push("/");
-    }
+  useEffect(() => {
+    const saved = loadLocation();
+    if (saved) setCoords(saved);
+    else router.replace("/");
+  }, [router]);
 
-    console.log(localStorage.getItem("location"));
+  const { data, isLoading, isError } = useQuery(["weather", coords], () => fetchWeather(coords!), {
+    enabled: coords !== null,
+  });
+
+  if (isError) {
+    return (
+      <p className="flex min-h-[400px] items-center justify-center">
+        Não foi possível carregar o clima. Tente novamente.
+      </p>
+    );
   }
 
-  const { data: whetherToday, isLoading: iswhetherTodayLoading } = useQuery(
-    "whetherToday",
-    () => fetchwhetherToday(latitude, longitude)
-  );
-
-  const { data: whetherWeek, isLoading: iswhetherWeekLoading } = useQuery(
-    "whetherWeek",
-    () => fetchwhetherWeek(latitude, longitude)
-  );
-
-  if (iswhetherTodayLoading || iswhetherWeekLoading) {
+  if (!coords || isLoading || !data) {
     return (
-      <div>
-        <div className="flex items-center space-x-4 w-full  min-h-[800px] justify-center">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
-          </div>
+      <div className="flex min-h-[800px] w-full items-center justify-center space-x-4" aria-busy="true">
+        <Skeleton className="h-12 w-12 rounded-full" />
+        <div className="space-y-2">
+          {Array.from({ length: 12 }, (_, i) => (
+            <Skeleton key={i} className={i % 2 ? "h-4 w-[200px]" : "h-4 w-[250px]"} />
+          ))}
         </div>
       </div>
     );
   }
 
-  // Valores da API OpenWeatherMap em Kelvin
-  const kelvinTemp = whetherToday.main.temp;
-
-  // Converter para Celsius
-  const celsiusTemp = kelvinTemp - 273.15;
-
   return (
-    <div className=" bg-black text-[white]">
-      <Weathertoday
-        IdImg={whetherToday.weather[0].icon}
-        NameCity={whetherToday.name}
-        InfoDay={whetherToday.dt}
-        tempoAtual={`${celsiusTemp.toFixed(2)} °C`}
-        description={whetherToday.weather[0].description}
-        latitude={latitude}
-        longitude={longitude}
-      ></Weathertoday>
-      <WeatherWeeke data={whetherWeek.list}></WeatherWeeke>
-      <DeteilsWeatherToday
-        Sunrise={whetherToday.sys.sunrise}
-        Sunset={whetherToday.sys.sunset}
-        pressure={whetherToday.main.pressure}
-        humidity={whetherToday.main.humidity}
-        speed={whetherToday.wind.speed}
-      ></DeteilsWeatherToday>
-    </div>
+    <>
+      <Weathertoday today={data.today} coords={coords} />
+      <WeatherWeeke data={data.forecast} />
+      <DeteilsWeatherToday today={data.today} />
+    </>
   );
 }

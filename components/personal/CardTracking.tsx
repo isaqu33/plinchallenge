@@ -1,108 +1,68 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useEffect, useState } from "react";
+import { validateCepQuery, type CepQuery } from "@/lib/cep";
 
-interface CardTrackingProp {
-  getParams: (argo: any) => void;
+interface Props {
+  onSearch: (query: CepQuery) => void;
+  loading: boolean;
 }
 
-export function CardTracking({ getParams }: CardTrackingProp) {
-  const [Uf, setUf] = useState("");
-  const [Cidade, setCidade] = useState("");
-  const [Rua, setRua] = useState("");
-
-  const [ActivateButon, setActivateButon] = useState(true);
-
-  useEffect(() => {
-    if (!Uf || !Cidade || !Rua) {
-      setActivateButon(true);
-    } else {
-      setActivateButon(false);
-    }
-  }, [Uf, Cidade, Rua]);
+export function CardTracking({ onSearch, loading }: Props) {
+  const [query, setQuery] = useState<CepQuery>({ uf: "", cidade: "", rua: "" });
+  const error = validateCepQuery(query);
+  const touched = query.uf || query.cidade || query.rua;
+  const set = (field: keyof CepQuery) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setQuery((q) => ({ ...q, [field]: e.target.value }));
 
   return (
-    <Tabs defaultValue="account" className="w-[90%]">
+    <form
+      className="w-[90%]"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!error) onSearch(query);
+      }}
+    >
       <Card>
         <CardHeader>
-          <CardTitle>{"Cep"}</CardTitle>
+          <CardTitle>CEP</CardTitle>
           <CardDescription>
-            {
-              "Para identificar os possiveis seus possiveis Ceps, coloque as informações a baixo."
-            }
-            <br></br>
-            <br></br>
-            {
-              " OBS: Para Conseguirmos identificar os possíveis CEP-S preencha todos os campos!"
-            }
-            <br></br>
-            <br></br>
-            <p>
-              {
-                "Coloque as informações corretas para conseguirmos fazer a consultaCaso não consiga, aqui está um exemplo: UF: RS - CIDADE: Porto Alegre - Rua: Domingos"
-              }
-            </p>
+            Informe UF, cidade e logradouro para descobrir os CEPs possíveis. Todos os campos são
+            obrigatórios.
+            <br />
+            Exemplo: UF: RS · Cidade: Porto Alegre · Rua: Domingos
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="space-y-1">
-            <Label htmlFor="name">UF</Label>
+            <Label htmlFor="uf">UF</Label>
+            <Input id="uf" maxLength={2} placeholder="DF, CE, RS" value={query.uf} onChange={set("uf")} />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="cidade">Cidade</Label>
             <Input
-              id="uf"
-              placeholder="*DF,CE,NO"
-              onChange={(e) => {
-                setUf(e.target.value);
-              }}
+              id="cidade"
+              placeholder="Brasília, Fortaleza"
+              value={query.cidade}
+              onChange={set("cidade")}
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="username">{"Cidade"}</Label>
-            <Input
-              id="Cidade"
-              placeholder="Brasilia, Ceara, Norte"
-              onChange={(e) => {
-                setCidade(e.target.value);
-              }}
-            />
+            <Label htmlFor="rua">Logradouro (rua)</Label>
+            <Input id="rua" placeholder="Domingos, Quadra 26" value={query.rua} onChange={set("rua")} />
           </div>
-          <div className="space-y-1">
-            <Label htmlFor="username">{"logradouro-Rua-"}</Label>
-            <Input
-              id="logradouro"
-              placeholder="Quadra 26, Domingos, QRC 10, Maria Lacerda"
-              onChange={(e) => {
-                setRua(e.target.value);
-              }}
-            />
-          </div>
+          {touched && error && <p className="text-sm text-red-600">{error}</p>}
         </CardContent>
         <CardFooter>
-          <Button
-            disabled={ActivateButon}
-            onClick={() =>
-              getParams(`https://viacep.com.br/ws/${Uf}/${Cidade}/${Rua}/json/`)
-            }
-          >
-            {"Pesquisar Possiveis Cep-s"}
+          <Button type="submit" disabled={!!error || loading}>
+            {loading ? "Pesquisando..." : "Pesquisar possíveis CEPs"}
           </Button>
         </CardFooter>
       </Card>
-    </Tabs>
+    </form>
   );
 }
