@@ -7,11 +7,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
+import UnitToggle from "./UnitToggle";
 
 const links = [
   { nome: "Clima", href: "/climate" },
   { nome: "CEP", href: "/Tracking" },
   { nome: "Contato", href: "/register" },
+  { nome: "Sobre", href: "/sobre" },
 ];
 
 function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
@@ -54,6 +56,7 @@ export default function Header() {
             <NavLinks pathname={pathname} />
           </nav>
           <div className="flex items-center gap-1">
+            <UnitToggle />
             <ThemeToggle />
             <Button
               variant="ghost"

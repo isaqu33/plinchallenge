@@ -17,7 +17,10 @@ export default function Footer() {
         <div className="space-y-1">
           <Logo />
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} · Feito por Isaque · Dados: OpenWeather, ViaCEP e OpenStreetMap
+            © {new Date().getFullYear()} · Feito por Isaque · Dados: OpenWeather, ViaCEP e OpenStreetMap ·{" "}
+            <a href="/sobre" className="underline">
+              Sobre
+            </a>
           </p>
         </div>
         <div className="flex items-center gap-2">

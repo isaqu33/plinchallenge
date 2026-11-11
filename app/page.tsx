@@ -3,6 +3,7 @@
 import { ArrowRight, CloudSun, Mail, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CitySearch from "@/components/personal/CitySearch";
 import Logo from "@/components/layout/Logo";
 import ThemeToggle from "@/components/layout/ThemeToggle";
 import {
@@ -103,9 +104,20 @@ export default function Home() {
               </>
             )}
           </Button>
-          {status === "denied" && (
-            <span className="text-sm text-destructive">Localização bloqueada no navegador.</span>
-          )}
+        </div>
+
+        <div className="mt-6 max-w-md">
+          <p className="mb-2 text-sm font-semibold text-muted-foreground">
+            {status === "denied" || status === "unsupported"
+              ? "Sem acesso à localização? Busque sua cidade:"
+              : "Ou escolha uma cidade:"}
+          </p>
+          <CitySearch
+            onSelect={(place) => {
+              saveLocation(place);
+              push("/climate");
+            }}
+          />
         </div>
 
         <ul className="mt-16 grid gap-4 sm:grid-cols-3">
