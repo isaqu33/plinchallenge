@@ -4,3 +4,4 @@ screenshots
 public
 package-lock.json
 *.md
+*.svg
