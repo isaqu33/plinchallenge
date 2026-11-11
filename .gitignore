@@ -21,3 +21,6 @@ test-results
 # Contexto do Claude (não versionar)
 /docs/
 /CLAUDE.md
+
+playwright-report
+blob-report

@@ -5,3 +5,5 @@ public
 package-lock.json
 *.md
 *.svg
+playwright-report
+test-results

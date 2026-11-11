@@ -1,0 +1,15 @@
+# Imagem de produção rodando local (não é deploy): docker compose -f docker-compose.prod.yml up --build
+name: plin_challenge_prod
+
+services:
+  web:
+    container_name: plin-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "${WEB_PORT_HOST:-3100}:3100"
+    env_file:
+      - .env
+    restart: unless-stopped
